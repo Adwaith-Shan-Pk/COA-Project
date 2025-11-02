@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CPU Flags Visualizer - Dark Theme</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Link to external CSS file for custom styles -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="min-h-screen">
+
+    <!-- Header -->
+    <header class="bg-gray-900 text-white p-4 shadow-2xl border-b-4 border-teal-500">
+        <div class="container mx-auto flex justify-between items-center">
+            <h1 class="text-3xl font-extrabold tracking-tight text-teal-300">CPU Flags Visualizer</h1>
+            <span class="text-sm opacity-60 hidden sm:block">Computer Organization & Architecture Project</span>
+            <div class="flex space-x-4">
+                <button class="bg-teal-600 hover:bg-teal-500 px-4 py-2 rounded-lg text-sm transition shadow-md" onclick="showMessage('Help is currently unavailable.')">Help</button>
+                <button class="bg-teal-600 hover:bg-teal-500 px-4 py-2 rounded-lg text-sm transition shadow-md" onclick="showMessage('Examples are not implemented in this prototype.')">Examples</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="container mx-auto p-4 sm:p-6 lg:p-8 grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+        <!-- Left Panel: Operation Configuration -->
+        <section class="lg:col-span-2 bg-gray-800 p-6 rounded-2xl shadow-2xl border border-gray-700">
+            <h2 class="text-xl font-semibold mb-6 pb-2 border-b border-gray-600 text-teal-400 flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1.517l.951.317 2.45-2.45a1 1 0 011.414 1.414l-2.45 2.45.317.951h1.517a1 1 0 010 2h-1.517l-.317.951 2.45 2.45a1 1 0 01-1.414 1.414l-2.45-2.45-.951.317v1.517a1 1 0 01-2 0v-1.517l-.951-.317-2.45 2.45a1 1 0 01-1.414-1.414l2.45-2.45.951-.317V3a1 1 0 011-1z" clip-rule="evenodd" />
+                </svg>
+                Operation Configuration (8-bit)
+            </h2>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+                <!-- Input A -->
+                <div class="space-y-3 p-4 border border-gray-700 rounded-xl bg-gray-700/30">
+                    <p class="font-medium text-lg text-gray-100">Input A</p>
+                    <div class="flex space-x-2">
+                        <button id="modeA_Decin" class="mode-btn-a px-3 py-1 text-sm rounded-full bg-gray-700 text-gray-300 font-medium" data-mode="decin" onclick="setMode('A', 'decin')">Decin</button>
+                        <button id="modeA_Binary" class="mode-btn-a px-3 py-1 text-sm rounded-full bg-teal-500 text-white" data-mode="binary" onclick="setMode('A', 'binary')">Binary</button>
+                    </div>
+                    <input type="text" id="inputA" class="w-full p-3 rounded-lg input-box font-mono focus:ring-2 focus:ring-teal-500 focus:border-transparent transition" placeholder="Binary (max 8 bits)" maxlength="8" oninput="validateInput('A')">
+                    <p id="errorA" class="text-red-400 text-xs h-4"></p>
+                </div>
+
+                <!-- Input B -->
+                <div class="space-y-3 p-4 border border-gray-700 rounded-xl bg-gray-700/30">
+                    <p class="font-medium text-lg text-gray-100">Input B</p>
+                    <div class="flex space-x-2">
+                        <button id="modeB_Decin" class="mode-btn-b px-3 py-1 text-sm rounded-full bg-gray-700 text-gray-300 font-medium" data-mode="decin" onclick="setMode('B', 'decin')">Decin</button>
+                        <button id="modeB_Binary" class="mode-btn-b px-3 py-1 text-sm rounded-full bg-teal-500 text-white" data-mode="binary" onclick="setMode('B', 'binary')">Binary</button>
+                    </div>
+                    <input type="text" id="inputB" class="w-full p-3 rounded-lg input-box font-mono focus:ring-2 focus:ring-teal-500 focus:border-transparent transition" placeholder="Binary (max 8 bits)" maxlength="8" oninput="validateInput('B')">
+                    <p id="errorB" class="text-red-400 text-xs h-4"></p>
+                </div>
+
+                <!-- Operation -->
+                <div class="space-y-3 p-4 border border-gray-700 rounded-xl bg-gray-700/30">
+                    <p class="font-medium text-lg text-gray-100">Operation</p>
+                    <select id="operation" class="w-full p-3 rounded-lg bg-gray-700 border border-gray-600 text-gray-200">
+                        <option value="ADD">ADD (Addition)</option>
+                        <!-- Only supporting ADD for this prototype -->
+                    </select>
+                    <div class="flex items-center mt-2 p-1">
+                        <input type="checkbox" id="signedMode" class="form-checkbox h-5 w-5 text-teal-500 bg-gray-700 rounded-md border-gray-600 transition duration-150 ease-in-out" checked>
+                        <label for="signedMode" class="ml-2 text-sm text-gray-300 select-none">Signed Mode (Two's Complement)</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Execution Button -->
+            <button id="executeButton" onclick="executeOperation()" class="w-full bg-teal-600 hover:bg-teal-500 text-white font-bold py-3 rounded-xl transition duration-300 ease-in-out shadow-lg hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-teal-400 transform hover:scale-[1.005]">
+                <span class="text-lg">▶ Execute & Visualize Flags</span>
+            </button>
+        </section>
+
+        <!-- Right Panel: CPU Flags & Result -->
+        <section class="bg-gray-800 p-6 rounded-2xl shadow-2xl space-y-6 border border-gray-700">
+            <h2 class="text-xl font-semibold mb-4 pb-2 border-b border-gray-600 text-teal-400 flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                    <path d="M7 3a1 1 0 011-1h6a1 1 0 011 1v1a1 1 0 01-1 1H8a1 1 0 01-1-1V3zm0 5a1 1 0 011-1h6a1 1 0 011 1v1a1 1 0 01-1 1H8a1 1 0 01-1-1V8zm0 5a1 1 0 011-1h6a1 1 0 011 1v1a1 1 0 01-1 1H8a1 1 0 01-1-1v-1z" />
+                    <path fill-rule="evenodd" d="M3 4a1 1 0 011-1h1a1 1 0 011 1v1a1 1 0 01-1 1H4a1 1 0 01-1-1V4zm1 7a1 1 0 000 2h1a1 1 0 100-2H4zm-1-3a1 1 0 011-1h1a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd" />
+                </svg>
+                CPU Flags & Result
+            </h2>
+
+            <!-- Result Display -->
+            <div class="bg-gray-700 p-4 rounded-xl border border-teal-500/50">
+                <p class="text-sm font-medium text-gray-400">Result (8-bit)</p>
+                <div id="resultOutput" class="text-2xl font-mono mt-1 text-gray-100">
+                    <span class="text-gray-400">00000000</span>
+                </div>
+            </div>
+
+            <!-- Flags Grid -->
+            <div class="grid grid-cols-2 gap-4">
+                <div class="p-3 border border-gray-700 rounded-xl flex items-center justify-between bg-gray-700/30">
+                    <div class="flex-grow">
+                        <p class="font-medium text-gray-200">Carry (C)</p>
+                        <p class="text-xs text-gray-400">Unsigned overflow / Final carry out</p>
+                    </div>
+                    <div id="flagC" class="flag-indicator flag-inactive">C</div>
+                </div>
+
+                <div class="p-3 border border-gray-700 rounded-xl flex items-center justify-between bg-gray-700/30">
+                    <div class="flex-grow">
+                        <p class="font-medium text-gray-200">Zero (Z)</p>
+                        <p class="text-xs text-gray-400">Set if result is zero</p>
+                    </div>
+                    <div id="flagZ" class="flag-indicator flag-inactive">Z</div>
+                </div>
+
+                <div class="p-3 border border-gray-700 rounded-xl flex items-center justify-between bg-gray-700/30">
+                    <div class="flex-grow">
+                        <p class="font-medium text-gray-200">Sign (S)</p>
+                        <p class="text-xs text-gray-400">Set if MSB is 1 (result is negative)</p>
+                    </div>
+                    <div id="flagS" class="flag-indicator flag-inactive">S</div>
+                </div>
+
+                <div class="p-3 border border-gray-700 rounded-xl flex items-center justify-between bg-gray-700/30">
+                    <div class="flex-grow">
+                        <p class="font-medium text-gray-200">Overflow (O)</p>
+                        <p class="text-xs text-gray-400">Set if signed result is outside range</p>
+                    </div>
+                    <div id="flagO" class="flag-indicator flag-inactive">O</div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    
+    <div id="messageBox" class="fixed inset-0 bg-gray-900 bg-opacity-90 hidden z-50 items-center justify-center">
+        <div class="bg-gray-700 p-6 rounded-xl shadow-2xl max-w-sm w-full border-t-4 border-teal-500">
+            <p id="messageContent" class="text-lg font-semibold text-gray-100 mb-4"></p>
+            <button class="w-full bg-teal-600 hover:bg-teal-500 text-white font-bold py-2 rounded-lg transition" onclick="hideMessage()">Close</button>
+        </div>
+    </div>
+
+    
+    <script src="script.js"></script>
+</body>
+</html>
